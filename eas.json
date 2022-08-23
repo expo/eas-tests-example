@@ -18,7 +18,8 @@
     "production": {},
     "test": {
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "buildArtifactPaths": ["artifacts/**/*.png"]
       }
     }
   },
