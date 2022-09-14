@@ -1,0 +1,156 @@
+diff --git a/node_modules/expo-dev-menu/CHANGELOG.md b/node_modules/expo-dev-menu/CHANGELOG.md
+index 84d0da3..7f3ce68 100644
+--- a/node_modules/expo-dev-menu/CHANGELOG.md
++++ b/node_modules/expo-dev-menu/CHANGELOG.md
+@@ -10,6 +10,8 @@
+ 
+ ### 💡 Others
+ 
++- Disable onboarding popup with URL query param. ([#19024](https://github.com/expo/expo/pull/19024) by [@douglowder](https://github.com/douglowder))
++
+ ## 1.2.1 — 2022-08-16
+ 
+ ### 🐛 Bug fixes
+diff --git a/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuDevSettings.kt b/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuDevSettings.kt
+index 6066a7d..117dbf4 100644
+--- a/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuDevSettings.kt
++++ b/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuDevSettings.kt
+@@ -23,15 +23,18 @@ object DevMenuDevSettings {
+         putBoolean("isElementInspectorAvailable", devSettings.isJSDevModeEnabled)
+         putBoolean("isHotLoadingAvailable", devSettings.isJSDevModeEnabled)
+         putBoolean("isPerfMonitorAvailable", devSettings.isJSDevModeEnabled)
+-        putBoolean("isJSInspectorAvailable", run {
+-          val packageName = reactInstanceManager.currentReactContext?.packageName
+-            ?: return@run false
+-          val metroHost = "http://${devSettings.packagerConnectionSettings.debugServerHost}"
+-          runBlocking {
+-            DevMenuManager.metroClient
+-              .queryJSInspectorAvailability(metroHost, packageName)
++        putBoolean(
++          "isJSInspectorAvailable",
++          run {
++            val packageName = reactInstanceManager.currentReactContext?.packageName
++              ?: return@run false
++            val metroHost = "http://${devSettings.packagerConnectionSettings.debugServerHost}"
++            runBlocking {
++              DevMenuManager.metroClient
++                .queryJSInspectorAvailability(metroHost, packageName)
++            }
+           }
+-        })
++        )
+       }
+     }
+ 
+diff --git a/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuManager.kt b/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuManager.kt
+index 9f790f0..b4a9fe8 100644
+--- a/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuManager.kt
++++ b/node_modules/expo-dev-menu/android/src/debug/java/expo/modules/devmenu/DevMenuManager.kt
+@@ -206,6 +206,10 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
+     }
+   }
+ 
++  private fun hasDisableOnboardingQueryParam(urlString: String): Boolean {
++    return urlString.contains("disableOnboarding=1")
++  }
++
+   /**
+    * Starts dev menu if wasn't initialized, prepares for opening menu at launch if needed and gets [DevMenuPreferences].
+    * We can't open dev menu here, cause then the app will crash - two react instance try to render.
+@@ -227,6 +231,10 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
+           DevMenuDefaultPreferences()
+         }
+       ).also {
++      if (hasDisableOnboardingQueryParam(currentManifestURL.orEmpty())) {
++        it.isOnboardingFinished = true
++      }
++    }.also {
+       shouldLaunchDevMenuOnStart = canLaunchDevMenuOnStart && (it.showsAtLaunch || !it.isOnboardingFinished)
+       if (shouldLaunchDevMenuOnStart) {
+         reactContext.addLifecycleEventListener(this)
+diff --git a/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/DevMenuActivity.kt b/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/DevMenuActivity.kt
+index 280f6ea..4553080 100644
+--- a/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/DevMenuActivity.kt
++++ b/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/DevMenuActivity.kt
+@@ -1,7 +1,5 @@
+ package expo.modules.devmenu
+ 
+-import android.content.Context
+-import android.content.pm.ActivityInfo
+ import android.os.Build
+ import android.os.Bundle
+ import android.view.KeyEvent
+diff --git a/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/extensions/DevMenuExtension.kt b/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/extensions/DevMenuExtension.kt
+index fda70a4..fe0b588 100644
+--- a/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/extensions/DevMenuExtension.kt
++++ b/node_modules/expo-dev-menu/android/src/main/java/expo/modules/devmenu/extensions/DevMenuExtension.kt
+@@ -15,7 +15,6 @@ import expo.interfaces.devmenu.items.KeyCommand
+ import expo.modules.devmenu.DEV_MENU_TAG
+ import expo.modules.devmenu.DevMenuManager
+ import expo.modules.devmenu.devtools.DevMenuDevToolsDelegate
+-import kotlinx.coroutines.runBlocking
+ 
+ class DevMenuExtension(reactContext: ReactApplicationContext) :
+   ReactContextBaseJavaModule(reactContext), DevMenuExtensionInterface {
+diff --git a/node_modules/expo-dev-menu/android/src/release/java/expo/modules/devmenu/DevMenuManager.kt b/node_modules/expo-dev-menu/android/src/release/java/expo/modules/devmenu/DevMenuManager.kt
+index f773858..492be44 100644
+--- a/node_modules/expo-dev-menu/android/src/release/java/expo/modules/devmenu/DevMenuManager.kt
++++ b/node_modules/expo-dev-menu/android/src/release/java/expo/modules/devmenu/DevMenuManager.kt
+@@ -96,7 +96,6 @@ object DevMenuManager : DevMenuManagerInterface {
+     throw IllegalStateException(DEV_MENU_IS_NOT_AVAILABLE)
+   }
+ 
+-
+   override fun setCanLaunchDevMenuOnStart(canLaunchDevMenuOnStart: Boolean) {
+     throw IllegalStateException(DEV_MENU_IS_NOT_AVAILABLE)
+   }
+diff --git a/node_modules/expo-dev-menu/expo-module.config.json b/node_modules/expo-dev-menu/expo-module.config.json
+index 360c27f..b678108 100644
+--- a/node_modules/expo-dev-menu/expo-module.config.json
++++ b/node_modules/expo-dev-menu/expo-module.config.json
+@@ -4,6 +4,7 @@
+   "ios": {
+     "podspecPath": "expo-dev-menu.podspec",
+     "swiftModuleName": "EXDevMenu",
++    "appDelegateSubscribers": ["EXDevMenuAppDelegateSubscriber"],
+     "reactDelegateHandlers": ["ExpoDevMenuReactDelegateHandler"],
+     "debugOnly": true
+   }
+diff --git a/node_modules/expo-dev-menu/ios/EXDevMenuAppDelegateSubscriber.swift b/node_modules/expo-dev-menu/ios/EXDevMenuAppDelegateSubscriber.swift
+new file mode 100644
+index 0000000..18e7e06
+--- /dev/null
++++ b/node_modules/expo-dev-menu/ios/EXDevMenuAppDelegateSubscriber.swift
+@@ -0,0 +1,16 @@
++// Copyright 2018-present 650 Industries. All rights reserved.
++
++import ExpoModulesCore
++
++public class EXDevMenuAppDelegateSubscriber: ExpoAppDelegateSubscriber {
++  public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
++    disableOnboardingIfNeeded(url)
++    return false
++  }
++  
++  private func disableOnboardingIfNeeded(_ url: URL) {
++    if url.relativeString.contains("disableOnboarding=1") {
++      DevMenuPreferences.isOnboardingFinished = true
++    }
++  }
++}
+diff --git a/node_modules/expo-dev-menu/ios/Modules/DevMenuPreferences.swift b/node_modules/expo-dev-menu/ios/Modules/DevMenuPreferences.swift
+index 992977e..b73db23 100644
+--- a/node_modules/expo-dev-menu/ios/Modules/DevMenuPreferences.swift
++++ b/node_modules/expo-dev-menu/ios/Modules/DevMenuPreferences.swift
+@@ -84,8 +84,10 @@ public class DevMenuPreferences: NSObject, RCTBridgeModule {
+ 
+   /**
+    Returns `true` only if the user finished onboarding, `false` otherwise.
++   This is now public because expo-dev-launcher needs access
++   in order to disable the onboarding popup for certain bundle URLs
+    */
+-  static var isOnboardingFinished: Bool {
++  public static var isOnboardingFinished: Bool {
+     get {
+       return DevMenuTestInterceptorManager.interceptor?.isOnboardingFinishedKey ?? boolForKey(isOnboardingFinishedKey)
+     }

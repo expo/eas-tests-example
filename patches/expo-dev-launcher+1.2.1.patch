@@ -1,0 +1,100 @@
+diff --git a/node_modules/expo-dev-launcher/android/src/debug/java/expo/modules/devlauncher/DevLauncherController.kt b/node_modules/expo-dev-launcher/android/src/debug/java/expo/modules/devlauncher/DevLauncherController.kt
+index e7b8036..7a1b7df 100644
+--- a/node_modules/expo-dev-launcher/android/src/debug/java/expo/modules/devlauncher/DevLauncherController.kt
++++ b/node_modules/expo-dev-launcher/android/src/debug/java/expo/modules/devlauncher/DevLauncherController.kt
+@@ -26,6 +26,7 @@ import expo.modules.devmenu.DevMenuManager
+ import expo.modules.devlauncher.react.activitydelegates.DevLauncherReactActivityNOPDelegate
+ import expo.modules.devlauncher.react.activitydelegates.DevLauncherReactActivityRedirectDelegate
+ import expo.modules.devlauncher.tests.DevLauncherTestInterceptor
++import expo.modules.devmenu.modules.DevMenuPreferences
+ import expo.modules.manifests.core.Manifest
+ import expo.modules.updatesinterface.UpdatesInterface
+ import kotlinx.coroutines.CoroutineScope
+@@ -197,6 +198,14 @@ class DevLauncherController private constructor() :
+           this.devMenuManager.setCanLaunchDevMenuOnStart(canLaunchDevMenuOnStart)
+         }
+ 
++        if (intent.getBundleExtra("launchArgs")
++            ?.getBoolean("EXDevMenuIsOnboardingFinished", false) ?: false) {
++          canLaunchDevMenuOnStart = false
++          this.devMenuManager.setCanLaunchDevMenuOnStart(canLaunchDevMenuOnStart)
++          this.devMenuManager.getSettings()?.isOnboardingFinished = true
++          this.devMenuManager.getMenuPreferences().putBoolean("isOnboardingFinished", true)
++        }
++
+         if (!isDevLauncherUrl(uri)) {
+           return handleExternalIntent(intent)
+         }
+diff --git a/node_modules/expo-dev-launcher/ios/EXDevLauncherController.m b/node_modules/expo-dev-launcher/ios/EXDevLauncherController.m
+index 2fc50e2..e02d908 100644
+--- a/node_modules/expo-dev-launcher/ios/EXDevLauncherController.m
++++ b/node_modules/expo-dev-launcher/ios/EXDevLauncherController.m
+@@ -404,6 +404,9 @@
+     projectUrl = expoUrl;
+   }
+   
++  // Disable onboarding popup if "&disableOnboarding=1" is a param
++  [EXDevLauncherURLHelper disableOnboardingPopupIfNeeded:expoUrl];
++
+   NSString *installationID = [_installationIDHelper getOrCreateInstallationID];
+ 
+   NSDictionary *updatesConfiguration = [EXDevLauncherUpdatesHelper createUpdatesConfigurationWithURL:expoUrl
+diff --git a/node_modules/expo-dev-launcher/ios/EXDevLauncherURLHelper.swift b/node_modules/expo-dev-launcher/ios/EXDevLauncherURLHelper.swift
+index 9c4aa67..fd432b6 100644
+--- a/node_modules/expo-dev-launcher/ios/EXDevLauncherURLHelper.swift
++++ b/node_modules/expo-dev-launcher/ios/EXDevLauncherURLHelper.swift
+@@ -1,6 +1,7 @@
+-  // Copyright 2015-present 650 Industries. All rights reserved.
++// Copyright 2015-present 650 Industries. All rights reserved.
+ 
+ import Foundation
++import EXDevMenu
+ 
+ @objc
+ public class EXDevLauncherUrl: NSObject {
+@@ -15,7 +16,7 @@ public class EXDevLauncherUrl: NSObject {
+     self.queryParams = EXDevLauncherURLHelper.getQueryParamsForUrl(url)
+     self.url = url
+     
+-    if (EXDevLauncherURLHelper.isDevLauncherURL(url)) {
++    if EXDevLauncherURLHelper.isDevLauncherURL(url) {
+       if let urlParam = self.queryParams["url"] {
+         if let urlFromParam = URL.init(string: urlParam) {
+           self.url = EXDevLauncherURLHelper.replaceEXPScheme(urlFromParam, to: "http")
+@@ -42,20 +43,30 @@ public class EXDevLauncherURLHelper: NSObject {
+     
+     let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
+     
+-    for queryItem in components?.queryItems ?? [] {
+-      if queryItem.name == "url" && queryItem.value != nil {
+-        hasUrlQueryParam = true
+-        break
+-      }
++    if ((components?.queryItems?.contains(where: {
++      $0.name == "url" && $0.value != nil
++    })) ?? false) {
++      hasUrlQueryParam = true
+     }
+     
+     return hasUrlQueryParam
+   }
+ 
++  @objc
++  public static func disableOnboardingPopupIfNeeded(_ url: URL) {
++    let components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)
++
++    if ((components?.queryItems?.contains(where: {
++      $0.name == "disableOnboarding" && ($0.value ?? "") == "1"
++    })) ?? false) {
++      DevMenuPreferences.isOnboardingFinished = true
++    }
++  }
++
+   @objc
+   public static func replaceEXPScheme(_ url: URL, to scheme: String) -> URL {
+     var components = URLComponents.init(url: url, resolvingAgainstBaseURL: false)!
+-    if (components.scheme == "exp") {
++    if components.scheme == "exp" {
+       components.scheme = scheme
+     }
+     return components.url!
