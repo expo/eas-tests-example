@@ -21,6 +21,14 @@
         "simulator": true,
         "buildArtifactPaths": ["artifacts/**/*.png"]
       }
+    },
+    "test_debug": {
+      "ios": {
+        "buildConfiguration": "Debug",
+        "simulator": true,
+        "buildArtifactPaths": ["artifacts/**/*.png"]
+      },
+      "channel": "test_debug"
     }
   },
   "submit": {

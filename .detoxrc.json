@@ -3,14 +3,15 @@
   "runnerConfig": "e2e/config.json",
   "skipLegacyWorkersInjection": true,
   "apps": {
-    "ios": {
+    "ios.debug": {
+      "type": "ios.app",
+      "build": "xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Debug -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build",
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/eastestsexample.app"
+    },
+    "ios.release": {
       "type": "ios.app",
       "build": "xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Release -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build",
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/eastestsexample.app"
-    },
-    "android": {
-      "type": "android.apk",
-      "binaryPath": "SPECIFY_PATH_TO_YOUR_APP_BINARY"
     }
   },
   "devices": {
@@ -19,22 +20,16 @@
       "device": {
         "type": "iPhone 11"
       }
-    },
-    "emulator": {
-      "type": "android.emulator",
-      "device": {
-        "avdName": "Pixel_3a_API_30_x86"
-      }
     }
   },
   "configurations": {
-    "ios": {
+    "ios.debug": {
       "device": "simulator",
-      "app": "ios"
+      "app": "ios.debug"
     },
-    "android": {
-      "device": "emulator",
-      "app": "android"
+    "ios.release": {
+      "device": "simulator",
+      "app": "ios.release"
     }
   }
 }
