@@ -1,15 +1,15 @@
 const {exec} = require('child_process');
 
 const link_url = (platform) => {
-  const url = `http://localhost:8081/index.bundle?platform=${platform}&dev=true&minify=false&disableOnboarding=1`;
-  return `com.dsokal.eas-tests-example://expo-development-client/?url=${encodeURI(url)}`;
+  const url = `http%3A%2F%2Flocalhost%3A8081%2Findex.bundle%3Fplatform%3D${platform}%26dev%3Dtrue%26minify%3Dfalse%26disableOnboarding%3D1`;
+  return `eastestsexample://expo-development-client/?url=${url}`;
 };
 
 const invoke_url = (platform) => {
   if (platform === 'android') {
     exec(`adb shell \"am start -W -a android.intent.action.VIEW -d \'\'\'${link_url(platform)}\'\'\' com.dsokal.eas-tests-example/.MainActivity\"`);
   } else if (platform === 'ios') {
-    exec(`xcrun simctl openurl booted ${link_url(platform)}`);
+    exec(`xcrun simctl openurl \"iPhone 11\" ${link_url(platform)}`);
   }
 };
 
@@ -26,7 +26,7 @@ describe('Home screen', () => {
     await sleepAsync(1000);
     invoke_url(device.getPlatform());
     await sleepAsync(1000);
-    //await device.reloadReactNative();
+    await device.reloadReactNative();
   });
 
   it('"Click me" button should be visible', async () => {

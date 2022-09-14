@@ -8,11 +8,16 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "detox:clean": "detox clean-framework-cache && detox build-framework-cache",
+    "detox:ios:build": "detox build -c ios",
+    "detox:ios:test": "detox test -c ios",
+    "detox:android:build": "detox build -c android",
+    "detox:android:test": "detox test -c android",
     "eas-build-pre-install": "./eas-hooks/eas-build-pre-install.sh",
     "eas-build-on-success": "./eas-hooks/eas-build-on-success.sh"
   },
   "dependencies": {
     "expo": "~46.0.7",
+    "expo-dev-client": "~1.2.1",
     "expo-dev-launcher": "^1.2.1",
     "expo-dev-menu": "^1.2.1",
     "expo-splash-screen": "~0.16.1",
