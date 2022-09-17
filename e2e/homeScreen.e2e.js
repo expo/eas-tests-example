@@ -1,34 +1,27 @@
-const { fail } = require('assert');
-const {exec} = require('child_process');
-const argparse = require('detox/src/utils/argparse');
-const appConfig = require('../app.json');
-
-const devLauncherPackagerUrl = (platform) => {
-  const url = `http://localhost:8081/index.bundle?platform=${platform}&dev=true&minify=false&disableOnboarding=1`;
-  return `eastestsexample://expo-development-client/?url=${encodeURIComponent(url)}`;
-};
-
-const invokeDevLauncherUrl = (platform) => {
-  if (platform === 'android') {
-    exec(`adb shell \"am start -W -a android.intent.action.VIEW -d \'\'\'${devLauncherPackagerUrl(platform)}\'\'\' com.dsokal.eas-tests-example/.MainActivity\"`);
-  } else if (platform === 'ios') {
-    exec(`xcrun simctl openurl \"iPhone 11\" ${devLauncherPackagerUrl(platform)}`);
-  }
-};
-
-const sleepAsync = t => new Promise(res => setTimeout(res, t));
+const {
+  sleepAsync,
+  getConfigurationName,
+  getAppId,
+  getDevLauncherPackagerUrl,
+  getLatestUpdateUrl,
+  getDeepLinkUrl,
+  invokeDevLauncherUrl,
+} = require('./utils');
 
 describe('Home screen', () => {
   beforeEach(async () => {
-    const appId = appConfig?.expo?.extra?.eas?.projectId || fail('EAS application ID not found');
+    const appId = getAppId();
+    const platform = device.getPlatform();
     console.warn('appId = ' + appId);
     await device.launchApp({
       newInstance: true,
     });
-    const configurationName = argparse.getArgValue('configuration');
-    if (configurationName.indexOf('debug') !== -1) {
+    if (getConfigurationName().indexOf('debug') !== -1) {
       await sleepAsync(1000);
-      invokeDevLauncherUrl(device.getPlatform());
+      // Test latest EAS update
+      // invokeDevLauncherUrl(platform, getDeepLinkUrl(getLatestUpdateUrl()));
+      // Test local packager URL
+      invokeDevLauncherUrl(platform, getDeepLinkUrl(getDevLauncherPackagerUrl(platform)));
       await sleepAsync(1000);
     }
     await device.reloadReactNative();
