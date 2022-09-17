@@ -18,6 +18,12 @@
     "production": {},
     "test": {
       "ios": {
+        "simulator": true,
+        "buildArtifactPaths": ["artifacts/**/*.png"]
+      }
+    },
+    "testDebug": {
+      "ios": {
         "buildConfiguration": "Debug",
         "simulator": true,
         "buildArtifactPaths": ["artifacts/**/*.png"]

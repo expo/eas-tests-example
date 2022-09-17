@@ -1,15 +1,18 @@
+const { fail } = require('assert');
 const {exec} = require('child_process');
+const argparse = require('detox/src/utils/argparse');
+const appConfig = require('../app.json');
 
-const link_url = (platform) => {
-  const url = `http%3A%2F%2Flocalhost%3A8081%2Findex.bundle%3Fplatform%3D${platform}%26dev%3Dtrue%26minify%3Dfalse%26disableOnboarding%3D1`;
-  return `eastestsexample://expo-development-client/?url=${url}`;
+const devLauncherPackagerUrl = (platform) => {
+  const url = `http://localhost:8081/index.bundle?platform=${platform}&dev=true&minify=false&disableOnboarding=1`;
+  return `eastestsexample://expo-development-client/?url=${encodeURIComponent(url)}`;
 };
 
-const invoke_url = (platform) => {
+const invokeDevLauncherUrl = (platform) => {
   if (platform === 'android') {
-    exec(`adb shell \"am start -W -a android.intent.action.VIEW -d \'\'\'${link_url(platform)}\'\'\' com.dsokal.eas-tests-example/.MainActivity\"`);
+    exec(`adb shell \"am start -W -a android.intent.action.VIEW -d \'\'\'${devLauncherPackagerUrl(platform)}\'\'\' com.dsokal.eas-tests-example/.MainActivity\"`);
   } else if (platform === 'ios') {
-    exec(`xcrun simctl openurl \"iPhone 11\" ${link_url(platform)}`);
+    exec(`xcrun simctl openurl \"iPhone 11\" ${devLauncherPackagerUrl(platform)}`);
   }
 };
 
@@ -17,15 +20,17 @@ const sleepAsync = t => new Promise(res => setTimeout(res, t));
 
 describe('Home screen', () => {
   beforeEach(async () => {
+    const appId = appConfig?.expo?.extra?.eas?.projectId || fail('EAS application ID not found');
+    console.warn('appId = ' + appId);
     await device.launchApp({
       newInstance: true,
-    //    launchArgs: {
-    //      EXDevMenuIsOnboardingFinished: true,
-    //    },
-      });
-    await sleepAsync(1000);
-    invoke_url(device.getPlatform());
-    await sleepAsync(1000);
+    });
+    const configurationName = argparse.getArgValue('configuration');
+    if (configurationName.indexOf('debug') !== -1) {
+      await sleepAsync(1000);
+      invokeDevLauncherUrl(device.getPlatform());
+      await sleepAsync(1000);
+    }
     await device.reloadReactNative();
   });
 
