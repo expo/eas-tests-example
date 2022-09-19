@@ -7,6 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "deeplink:ios": "node ./e2e/testdeeplink.js ios",
+    "deeplink:android": "node ./e2e/testdeeplink.js android",
     "detox:clean": "detox clean-framework-cache && detox build-framework-cache",
     "detox:ios:debug:build": "detox build -c ios.debug",
     "detox:ios:debug:test": "detox test -c ios.debug",
@@ -32,7 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "detox": "^19.9.3",
+    "detox": "^19.12.1",
     "jest": "^28.1.3",
     "patch-package": "^6.4.7"
   },

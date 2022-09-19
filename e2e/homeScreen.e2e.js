@@ -17,14 +17,20 @@ describe('Home screen', () => {
       newInstance: true,
     });
     if (getConfigurationName().indexOf('debug') !== -1) {
-      await sleepAsync(1000);
+      await device.openURL({
+        //url: getDeepLinkUrl(getDevLauncherPackagerUrl(platform)),
+        url: getDeepLinkUrl(getLatestUpdateUrl()),
+      });
+        // await sleepAsync(1000);
       // Test latest EAS update
       // invokeDevLauncherUrl(platform, getDeepLinkUrl(getLatestUpdateUrl()));
       // Test local packager URL
-      invokeDevLauncherUrl(platform, getDeepLinkUrl(getDevLauncherPackagerUrl(platform)));
-      await sleepAsync(1000);
+      // invokeDevLauncherUrl(platform, getDeepLinkUrl(getDevLauncherPackagerUrl(platform)));
+      // await sleepAsync(1000);
     }
-    await device.reloadReactNative();
+    // Only need this for local packager testing
+    await sleepAsync(3000);
+//    await device.reloadReactNative();
   });
 
   it('"Click me" button should be visible', async () => {
