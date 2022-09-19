@@ -30,8 +30,7 @@
       },
       "runtimeVersion": {
         "policy": "sdkVersion"
-      },
-      "package": "com.dsokal.eastestsexample"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
