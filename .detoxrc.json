@@ -8,11 +8,6 @@
       "build": "xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Debug -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build",
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/eastestsexample.app"
     },
-    "android.debug": {
-      "type": "android.apk",
-      "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-      "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd .."
-    },
     "ios.release": {
       "type": "ios.app",
       "build": "xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Release -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build",
@@ -25,12 +20,6 @@
       "device": {
         "type": "iPhone 11"
       }
-    },
-    "emulator": {
-      "type": "android.emulator",
-      "device": {
-        "avdName": "avd-32"
-      }
     }
   },
   "configurations": {
@@ -41,10 +30,6 @@
     "ios.release": {
       "device": "simulator",
       "app": "ios.release"
-    },
-    "android.debug": {
-      "device": "emulator",
-      "app": "android.debug"
     }
   }
 }
