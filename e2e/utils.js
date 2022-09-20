@@ -7,13 +7,6 @@ const appConfig = require('../app.json');
 // Async wait for n milliseconds
 const sleepAsync = t => new Promise(res => setTimeout(res, t));
 
-// Base64 encoding
-const base64Encode = (url) => {
-  let buff = Buffer.alloc(url.length, url);
-  return buff.toString('base64');
-};
-
-
 // Get Detox configuration being used
 const getConfigurationName = () => argparse.getArgValue('configuration');
 
@@ -45,7 +38,6 @@ const invokeDevLauncherUrl = (platform, deepLinkUrl) => {
 
 module.exports = {
   sleepAsync,
-  base64Encode,
   getConfigurationName,
   getAppId,
   getDevLauncherPackagerUrl,

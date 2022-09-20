@@ -1,36 +1,25 @@
 const {
   sleepAsync,
   getConfigurationName,
-  getAppId,
-  getDevLauncherPackagerUrl,
+  // getDevLauncherPackagerUrl,
   getLatestUpdateUrl,
   getDeepLinkUrl,
-  invokeDevLauncherUrl,
 } = require('./utils');
 
 describe('Home screen', () => {
   beforeEach(async () => {
-    const appId = getAppId();
-    const platform = device.getPlatform();
-    console.warn('appId = ' + appId);
     await device.launchApp({
       newInstance: true,
     });
     if (getConfigurationName().indexOf('debug') !== -1) {
       await device.openURL({
+        // Local testing with packager
         //url: getDeepLinkUrl(getDevLauncherPackagerUrl(platform)),
+        // Testing latest published EAS update for the test_debug channel
         url: getDeepLinkUrl(getLatestUpdateUrl()),
       });
-        // await sleepAsync(1000);
-      // Test latest EAS update
-      // invokeDevLauncherUrl(platform, getDeepLinkUrl(getLatestUpdateUrl()));
-      // Test local packager URL
-      // invokeDevLauncherUrl(platform, getDeepLinkUrl(getDevLauncherPackagerUrl(platform)));
-      // await sleepAsync(1000);
     }
-    // Only need this for local packager testing
     await sleepAsync(3000);
-//    await device.reloadReactNative();
   });
 
   it('"Click me" button should be visible', async () => {
