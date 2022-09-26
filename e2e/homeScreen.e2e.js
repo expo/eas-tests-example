@@ -11,6 +11,7 @@ describe('Home screen', () => {
     await device.launchApp({
       newInstance: true,
     });
+    await sleepAsync(1000);
     if (getConfigurationName().indexOf('debug') !== -1) {
       await device.openURL({
         // Local testing with packager
