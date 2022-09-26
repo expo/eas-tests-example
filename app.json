@@ -12,33 +12,23 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/f10e2699-efd6-4e27-a578-cebe372a2d0d"
+      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dsokal.eas-tests-example",
-      "runtimeVersion": "1.0.0"
+      "bundleIdentifier": "com.dsokal.eas-tests-example"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      },
-      "runtimeVersion": {
-        "policy": "sdkVersion"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "f10e2699-efd6-4e27-a578-cebe372a2d0d"
-      }
     }
   }
 }
