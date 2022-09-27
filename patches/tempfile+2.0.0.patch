@@ -1,13 +1,16 @@
 diff --git a/node_modules/tempfile/index.js b/node_modules/tempfile/index.js
-index 5a44ea6..ba4fff8 100644
+index 5a44ea6..9fc7b0c 100644
 --- a/node_modules/tempfile/index.js
 +++ b/node_modules/tempfile/index.js
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,10 @@
  'use strict';
  const path = require('path');
  const uuid = require('uuid');
 -const tempDir = require('temp-dir');
-+//const tempDir = require('temp-dir');
-+const tempDir = process.env.TMPDIR;
++
++let tempDir = process.env.TMPDIR;
++if (!tempDir) {
++  tempDir = require('temp-dir');
++}
  
  module.exports = ext => path.join(tempDir, uuid.v4() + (ext || ''));
