@@ -1,3 +1,8 @@
+// Usage: node ./e2e/testdeeplink.js <ios|android>
+//
+// If app is running in the simulator or emulator, invokes the deep link for the dev launcher
+// to load this app's JS bundle from the packager
+//
 const {
   base64Encode,
   getDevLauncherPackagerUrl,
