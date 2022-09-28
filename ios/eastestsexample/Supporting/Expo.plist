@@ -8,9 +8,9 @@
     <true/>
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
+    <key>EXUpdatesSDKVersion</key>
+    <string>46.0.0</string>
     <key>EXUpdatesURL</key>
-    <string>https://u.expo.dev/f10e2699-efd6-4e27-a578-cebe372a2d0d</string>
-    <key>EXUpdatesRuntimeVersion</key>
-    <string>1.0.0</string>
+    <string>https://exp.host/@dsokal/eas-tests-example</string>
   </dict>
 </plist>
