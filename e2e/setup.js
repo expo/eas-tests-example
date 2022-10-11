@@ -1,6 +1,3 @@
-const { cleanup } = require('detox');
-const adapter = require('detox/runners/jest/adapter');
-
 afterEach(async () => {
   if (testFailed) {
     await device.takeScreenshot('screenshot');
@@ -8,6 +5,5 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  device.uninstallApp();
-  await adapter.afterAll();
-})
+  await device.uninstallApp();
+});

@@ -17,17 +17,28 @@
     },
     "production": {},
     "test": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release",
+        "withoutCredentials": true
+      },
       "ios": {
-        "simulator": true,
-        "buildArtifactPaths": ["artifacts/**/*.png"]
-      }
+        "simulator": true
+      },
+      "buildArtifactPaths": ["artifacts/**/*.png"]
     },
     "test_debug": {
+      "android": {
+        "gradleCommand": ":app:assembleDebug :app:assembleAndroidTest -DtestBuildType=debug",
+        "withoutCredentials": true
+      },
       "ios": {
         "buildConfiguration": "Debug",
-        "simulator": true,
-        "buildArtifactPaths": ["artifacts/**/*.png"]
+        "simulator": true
       },
+      "env": {
+        "EXPO_USE_UPDATES": "1"
+      },
+      "buildArtifactPaths": ["artifacts/**/*.png"],
       "channel": "test_debug"
     }
   },
