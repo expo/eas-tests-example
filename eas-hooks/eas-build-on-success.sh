@@ -20,6 +20,9 @@ if [[ "$EAS_BUILD_PLATFORM" == "android" ]]; then
   if [[ "$EAS_BUILD_PROFILE" == "test" ]]; then
     detox test --configuration android.release --headless
   fi
+  if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
+    detox test --configuration android.debug --headless
+  fi
 
   # Kill emulator
   adb emu kill

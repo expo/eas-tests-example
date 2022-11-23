@@ -6,16 +6,26 @@ module.exports.openAppForDebugBuild = async function openAppForDebugBuild() {
     return;
   }
 
-  await sleep(1000);
-  await device.openURL({
-    url: process.env.EXPO_USE_UPDATES
-      // Testing latest published EAS update for the test_debug channel
-      ? getDeepLinkUrl(getLatestUpdateUrl())
-      // Local testing with packager
-      : getDeepLinkUrl(getDevLauncherPackagerUrl(platform)),
-  });
+  const deepLinkUrl = process.env.EXPO_USE_UPDATES
+    ? // Testing latest published EAS update for the test_debug channel
+      getDeepLinkUrl(getLatestUpdateUrl())
+    : // Local testing with packager
+      getDeepLinkUrl(getDevLauncherPackagerUrl(platform));
+
+  if (platform === 'ios') {
+    await device.launchApp();
+    sleep(1000);
+    await device.openURL({
+      url: deepLinkUrl,
+    });
+  } else {
+    await device.launchApp({
+      url: deepLinkUrl,
+    });
+  }
+
   await sleep(3000);
-}
+};
 
 const getDeepLinkUrl = (url) =>
   `eastestsexample://expo-development-client/?url=${encodeURIComponent(url)}`;
@@ -28,4 +38,4 @@ const getLatestUpdateUrl = () =>
 
 const getAppId = () => appConfig?.expo?.extra?.eas?.projectId ?? '';
 
-const sleep = t => new Promise(res => setTimeout(res, t));
+const sleep = (t) => new Promise((res) => setTimeout(res, t));
