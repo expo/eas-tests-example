@@ -1,11 +1,8 @@
-const { openAppForDebugBuild } = require('./utils/openAppForDebugBuild');
+const { openApp } = require('./utils/openApp');
 
 describe('Home screen', () => {
   beforeEach(async () => {
-    await device.launchApp({
-      newInstance: true,
-    });
-    await openAppForDebugBuild();
+    await openApp();
   });
 
   it('"Click me" button should be visible', async () => {
