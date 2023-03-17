@@ -1,7 +1,9 @@
 const appConfig = require('../../../app.json');
 
+const platform = device.getPlatform();
+const target = device.target;
+
 module.exports.openApp = async function openApp() {
-  const [platform, target] = process.env.DETOX_CONFIGURATION.split('.');
   if (target === 'debug') {
     return await openAppForDebugBuild(platform);
   } else {
@@ -9,7 +11,7 @@ module.exports.openApp = async function openApp() {
       newInstance: true,
     });
   }
-}
+};
 
 async function openAppForDebugBuild(platform) {
   const deepLinkUrl = process.env.EXPO_USE_UPDATES
@@ -34,7 +36,7 @@ async function openAppForDebugBuild(platform) {
   }
 
   await sleep(3000);
-};
+}
 
 const getDeepLinkUrl = (url) =>
   `eastestsexample://expo-development-client/?url=${encodeURIComponent(url)}`;

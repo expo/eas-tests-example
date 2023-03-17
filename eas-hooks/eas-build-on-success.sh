@@ -37,18 +37,18 @@ if [[ "$EAS_BUILD_PLATFORM" == "android" ]]; then
 
   # Execute Android tests
   if [[ "$EAS_BUILD_PROFILE" == "test" ]]; then
-    detox test --configuration android.release --headless
+    detox test --configuration android.release --take-screenshots=failing
   fi
   if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
-    detox test --configuration android.debug --headless
+    detox test --configuration android.debug --take-screenshots=failing
   fi
 else
   # Execute iOS tests
   if [[  "$EAS_BUILD_PROFILE" == "test" ]]; then
-    detox test --configuration ios.release --headless
+    detox test --configuration ios.release --take-screenshots=failing
   fi
   if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
-    detox test --configuration ios.debug --headless
+    detox test --configuration ios.debug --take-screenshots=failing
   fi
 fi
 
