@@ -9,8 +9,8 @@
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
     <key>EXUpdatesSDKVersion</key>
-    <string>46.0.0</string>
+    <string>48.0.0</string>
     <key>EXUpdatesURL</key>
-    <string>https://exp.host/@dsokal/eas-tests-example</string>
+    <string>https://exp.host/@douglowderexpo/eas-tests-example</string>
   </dict>
 </plist>

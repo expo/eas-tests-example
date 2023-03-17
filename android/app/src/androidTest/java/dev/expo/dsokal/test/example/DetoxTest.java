@@ -1,5 +1,5 @@
 package dev.expo.dsokal.test.example;
-
+    
 import com.wix.detox.Detox;
 import com.wix.detox.config.DetoxConfig;
 
