@@ -1,10 +1,11 @@
 const appConfig = require('../../../app.json');
+const { resolveConfig } = require('detox/internals');
 
 const platform = device.getPlatform();
-const target = device.target;
 
 module.exports.openApp = async function openApp() {
-  if (target === 'debug') {
+  const config = await resolveConfig();
+  if (config.configurationName.split('.')[1] === 'debug') {
     return await openAppForDebugBuild(platform);
   } else {
     return await device.launchApp({
