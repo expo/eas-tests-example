@@ -12,14 +12,13 @@ module.exports = {
   artifacts: {
     plugins: {
       log: process.env.CI ? 'failing' : undefined,
-      screenshot: process.env.CI ? 'failing' : undefined,
+      screenshot: 'failing',
     },
   },
   apps: {
     'ios.debug': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/BareExpoDetox.app',
-      build: './scripts/build-detox-ios.sh Debug',
     },
     'ios.release': {
       type: 'ios.app',

@@ -6,6 +6,7 @@ module.exports = {
   globalTeardown: 'detox/runners/jest/globalTeardown',
   testEnvironment: 'detox/runners/jest/testEnvironment',
   testTimeout: 120000,
-  testMatch: ['./**/*.e2e.js'],
+  rootDir: '..',
+  testMatch: **['<rootDir>/e2e/**/*.e2e.js'],**
   verbose: true,
 };

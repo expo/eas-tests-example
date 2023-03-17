@@ -33,7 +33,6 @@ if [[ "$EAS_BUILD_PLATFORM" == "android" ]]; then
     counter=$((counter + 1))
   done
 
-  sleep 10
 
   # Execute Android tests
   if [[ "$EAS_BUILD_PROFILE" == "test" ]]; then
