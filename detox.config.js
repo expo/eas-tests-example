@@ -4,9 +4,10 @@ module.exports = {
     level: process.env.CI ? 'debug' : undefined,
   },
   testRunner: {
+    $0: 'jest',
     args: {
       config: 'e2e/jest.config.js',
-      maxWorkers: 1,
+      _: ['e2e'],
     },
   },
   artifacts: {
@@ -18,57 +19,59 @@ module.exports = {
   apps: {
     'ios.debug': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/BareExpoDetox.app',
+      build:
+        'xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Debug -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build',
+      binaryPath:
+        'ios/build/Build/Products/Debug-iphonesimulator/eastestsexample.app',
     },
     'ios.release': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/BareExpoDetox.app',
-      build: './scripts/build-detox-ios.sh Release YES',
+      build:
+        'xcodebuild -workspace ios/eastestsexample.xcworkspace -scheme eastestsexample -configuration Release -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build',
+      binaryPath:
+        'ios/build/Build/Products/Release-iphonesimulator/eastestsexample.app',
     },
     'android.debug': {
       type: 'android.apk',
-      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
       build:
         'cd android && ./gradlew :app:assembleDebug :app:assembleAndroidTest -DtestBuildType=debug && cd ..',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
     },
     'android.release': {
       type: 'android.apk',
-      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
         'cd android && ./gradlew :app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release && cd ..',
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
     },
   },
   devices: {
     simulator: {
       type: 'ios.simulator',
-      headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 14 Pro',
+        type: 'iPhone 14',
       },
     },
     emulator: {
       type: 'android.emulator',
-      headless: Boolean(process.env.CI),
-      gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'avd-31',
+        avdName: 'pixel_4',
       },
     },
   },
   configurations: {
-    'ios.sim.debug': {
+    'ios.debug': {
       device: 'simulator',
       app: 'ios.debug',
     },
-    'ios.sim.release': {
+    'ios.release': {
       device: 'simulator',
       app: 'ios.release',
     },
-    'android.emu.debug': {
+    'android.debug': {
       device: 'emulator',
       app: 'android.debug',
     },
-    'android.emu.release': {
+    'android.release': {
       device: 'emulator',
       app: 'android.release',
     },
