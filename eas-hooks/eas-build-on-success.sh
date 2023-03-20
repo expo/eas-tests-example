@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 
+function cleanup()
+{
+  echo 'Cleaning up...'
+  if [[ "$EAS_BUILD_PLATFORM" == "android" ]]; then
+    # Kill emulator
+    adb emu kill &
+  fi
+}
+
+if [[ "$EAS_BUILD_PROFILE" != "test"* ]]; then
+  exit
+fi
+
+# Fail if anything errors
 set -eox pipefail
+# If this script exits, trap it first and clean up the emulator
+trap cleanup EXIT
 
 ANDROID_EMULATOR=pixel_4
 
@@ -17,20 +33,22 @@ if [[ "$EAS_BUILD_PLATFORM" == "android" ]]; then
     counter=$((counter + 1))
   done
 
-  if [[ "$EAS_BUILD_PROFILE" == "test" ]]; then
-    detox test --configuration android.release --headless
-  fi
-  if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
-    detox test --configuration android.debug --headless
-  fi
 
-  # Kill emulator
-  adb emu kill
-else
-  if [[  "$EAS_BUILD_PROFILE" == "test" ]]; then
-    detox test --configuration ios.release --headless
+  # Execute Android tests
+  if [[ "$EAS_BUILD_PROFILE" == "test" ]]; then
+    detox test --configuration android.release
   fi
   if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
-    detox test --configuration ios.debug --headless
+    detox test --configuration android.debug
+  fi
+else
+  # Execute iOS tests
+  if [[  "$EAS_BUILD_PROFILE" == "test" ]]; then
+    detox test --configuration ios.release
+  fi
+  if [[ "$EAS_BUILD_PROFILE" == "test_debug" ]]; then
+    detox test --configuration ios.debug
   fi
 fi
+
+
